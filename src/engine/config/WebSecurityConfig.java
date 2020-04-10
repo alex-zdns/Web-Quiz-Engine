@@ -1,8 +1,10 @@
 package engine.config;
 
 import engine.service.H2UserDetailsService;
+import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,15 +21,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private H2UserDetailsService userDetailsService;
-/*
-        @Bean
-        ServletRegistrationBean h2servletRegistration() {
-            ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebServlet());
-            registrationBean.addUrlMappings("/console/*");
-            return registrationBean;
-        }
 
-    */
+    @Bean
+    ServletRegistrationBean h2servletRegistration() {
+        ServletRegistrationBean registrationBean = new ServletRegistrationBean(new WebServlet());
+        registrationBean.addUrlMappings("/console/*");
+        return registrationBean;
+    }
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -36,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 //Доступ только для не зарегистрированных пользователей
-                .antMatchers("/api/register","/console/**", "/actuator/shutdown").not().fullyAuthenticated()
+                .antMatchers("/api/register", "/console/**", "/actuator/shutdown").not().fullyAuthenticated()
                 //Доступ только для пользователей с ролью Администратор
                 //.antMatchers("/admin/**").hasRole("ADMIN")
                 //.antMatchers("/news").hasRole("USER")
@@ -47,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().httpBasic()
                 .and().sessionManagement().disable();
 
-      //  httpSecurity.headers().frameOptions().disable();
+        httpSecurity.headers().frameOptions().disable();
     }
 
     @Bean
