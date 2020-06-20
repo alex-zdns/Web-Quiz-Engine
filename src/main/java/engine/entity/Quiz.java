@@ -3,19 +3,25 @@ package engine.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import java.util.Arrays;
+
 public class Quiz {
     private long id;
-    private String title;
-    private String text;
-    private String[] options;
-    private int answer;
 
-    public Quiz(String title, String text, String[] options, int answer) {
-        this.title = title;
-        this.text = text;
-        this.options = options;
-        this.answer = answer;
-    }
+    @NotBlank(message = "title is mandatory")
+    private String title;
+
+    @NotBlank(message = "text is mandatory")
+    private String text;
+
+    @Size(min = 2)
+    @NotEmpty
+    private String[] options;
+
+    private int[] answer;
 
     public Quiz() {
     }
@@ -28,8 +34,8 @@ public class Quiz {
         this.id = id;
     }
 
-    public boolean isCorrectAnswer(int answer) {
-        return answer == this.answer;
+    public boolean isCorrectAnswer(int[] answer) {
+        return Arrays.equals(answer, this.answer);
     }
 
     public String getTitle() {
@@ -57,12 +63,12 @@ public class Quiz {
     }
 
     @JsonIgnore
-    public int getAnswer() {
+    public int[] getAnswer() {
         return answer;
     }
 
     @JsonProperty
-    public void setAnswer(int answer) {
+    public void setAnswer(int[] answer) {
         this.answer = answer;
     }
 }

@@ -1,11 +1,13 @@
 package engine.controller;
 
 import engine.Service.QuizService;
+import engine.entity.AnswerEntity;
 import engine.entity.Quiz;
 import engine.entity.QuizResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,15 +18,16 @@ public class QuizController {
     QuizService quizService;
 
     @PostMapping("{id}/solve")
-    public QuizResult checkSolutions(@PathVariable int id, @RequestParam(value = "answer") int answer) {
+    public QuizResult checkSolutions(@PathVariable int id, @RequestBody AnswerEntity userAnswer) {
         Quiz quiz = quizService.getQuiz(id);
         return new QuizResult(
-                quiz.isCorrectAnswer(answer)
-        );
+                quizService.isCorrectAnswer(id, userAnswer.getAnswer())
+                );
+
     }
 
     @PostMapping
-    public Quiz createQuiz(@RequestBody Quiz quiz) {
+    public Quiz createQuiz(@Valid @RequestBody Quiz quiz) {
         return quizService.saveQuiz(quiz);
     }
 

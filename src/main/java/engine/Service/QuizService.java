@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public class QuizService {
-    private static List<Quiz> quizzes = new ArrayList<>();
+    private static final List<Quiz> quizzes = new ArrayList<>();
 
     public QuizService() {
 
@@ -18,13 +18,18 @@ public class QuizService {
     public Quiz saveQuiz(Quiz quiz) {
         int id = quizzes.size();
         quiz.setId(id);
+
+        if (quiz.getAnswer() == null) {
+            quiz.setAnswer(new int[0]);
+        }
+
         quizzes.add(quiz);
         return quiz;
     }
 
     public Quiz getQuiz(int id) {
         if (quizzes.size() > id) {
-           return quizzes.get(id);
+            return quizzes.get(id);
         } else {
             throw new NotFoundException();
         }
@@ -32,5 +37,10 @@ public class QuizService {
 
     public List<Quiz> getAllQuizzes() {
         return quizzes;
+    }
+
+    public boolean isCorrectAnswer(int id, int[] answer) {
+        Quiz quiz = getQuiz(id);
+        return quiz.isCorrectAnswer(answer);
     }
 }
