@@ -1,0 +1,10 @@
+# IntellijIdea files
+*.iml
+.idea
+out
+
+#gradle
+.gradle/
+gradle
+gradlew
+gradlew.bat

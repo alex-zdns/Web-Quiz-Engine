@@ -1,10 +1,10 @@
 package engine.entity;
 
-public class RequestAnswerObject {
+public class QuizResult {
     private boolean success;
     private String feedback;
 
-    public RequestAnswerObject(boolean isSuccess) {
+    public QuizResult(boolean isSuccess) {
         this.success = isSuccess;
 
         if (isSuccess) {
