@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.util.Arrays;
 
 @Entity
+@Table(name = "quizzes")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +32,11 @@ public class Quiz {
 
     @Column
     private int[] answer;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "UserID")
+    private User author;
 
     public Quiz() {
     }
@@ -82,4 +88,15 @@ public class Quiz {
     public void setAnswer(int[] answer) {
         this.answer = answer;
     }
+
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+
 }
