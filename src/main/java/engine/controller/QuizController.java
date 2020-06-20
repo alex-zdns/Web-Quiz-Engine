@@ -1,23 +1,40 @@
 package engine.controller;
 
+import engine.Service.QuizService;
 import engine.entity.Quiz;
 import engine.entity.QuizResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/quiz")
+@RequestMapping("/api/quizzes")
 public class QuizController {
 
+    @Autowired
+    QuizService quizService;
+
+    @PostMapping("{id}/solve")
+    public QuizResult checkSolutions(@PathVariable int id, @RequestParam(value = "answer") int answer) {
+        Quiz quiz = quizService.getQuiz(id);
+        return new QuizResult(
+                quiz.isCorrectAnswer(answer)
+        );
+    }
+
     @PostMapping
-    public QuizResult checkSolutions(@RequestParam(value = "answer") int answer) {
-        return new QuizResult(answer == 2);
+    public Quiz createQuiz(@RequestBody Quiz quiz) {
+        return quizService.saveQuiz(quiz);
+    }
+
+    @GetMapping("{id}")
+    public Quiz getQuiz(@PathVariable int id) {
+        return quizService.getQuiz(id);
     }
 
     @GetMapping
-    public Quiz getQuiz() {
-        String title = "The Java Logo";
-        String text = "What is depicted on the Java logo?";
-        String[] options = {"Robot","Tea leaf","Cup of coffee","Bug"};
-        return new Quiz(title, text, options, 2);
+    public List<Quiz> getAllQuizzes() {
+        return quizService.getAllQuizzes();
     }
 }

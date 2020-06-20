@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Quiz {
+    private long id;
     private String title;
     private String text;
     private String[] options;
@@ -17,6 +18,14 @@ public class Quiz {
     }
 
     public Quiz() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public boolean isCorrectAnswer(int answer) {
