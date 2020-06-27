@@ -52,6 +52,11 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void deleteUser() {
+        User user = getCurrentUser();
+        userRepository.delete(user);
+    }
+
     public User getCurrentUser() {
         return userRepository.findByEmail(getCurrentUsername());
     }

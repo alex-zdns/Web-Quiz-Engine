@@ -7,7 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name = "quizzes")
@@ -30,13 +32,18 @@ public class Quiz {
     @NotEmpty
     private String[] options;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column
     private int[] answer;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "UserID")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UserId")
     private User author;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quiz", cascade = CascadeType.ALL)
+    private List<CompletedQuiz> completedQuizList = new ArrayList<>();
 
     public Quiz() {
     }
@@ -79,16 +86,13 @@ public class Quiz {
         this.options = options;
     }
 
-    @JsonIgnore
     public int[] getAnswer() {
         return answer;
     }
 
-    @JsonProperty
     public void setAnswer(int[] answer) {
         this.answer = answer;
     }
-
 
     public User getAuthor() {
         return author;
@@ -98,5 +102,11 @@ public class Quiz {
         this.author = author;
     }
 
+    public List<CompletedQuiz> getCompletedQuizList() {
+        return completedQuizList;
+    }
 
+    public void setCompletedQuizList(List<CompletedQuiz> completedQuizList) {
+        this.completedQuizList = completedQuizList;
+    }
 }

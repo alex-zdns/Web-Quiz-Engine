@@ -23,9 +23,13 @@ public class User {
     @Size(min = 5)
     private String password;
 
-    @OneToMany(mappedBy = "author")
-    @Column
-    private List<Quiz> quizList = new ArrayList<Quiz>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.REMOVE)
+    private List<Quiz> quizList = new ArrayList<>();
+
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CompletedQuiz> completedQuizList = new ArrayList<>();
 
     public User() {
     }
@@ -62,5 +66,13 @@ public class User {
 
     public void setQuizList(List<Quiz> quizList) {
         this.quizList = quizList;
+    }
+
+    public List<CompletedQuiz> getCompletedQuizList() {
+        return completedQuizList;
+    }
+
+    public void setCompletedQuizList(List<CompletedQuiz> completedQuizList) {
+        this.completedQuizList = completedQuizList;
     }
 }

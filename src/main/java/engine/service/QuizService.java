@@ -1,19 +1,23 @@
 package engine.service;
 
+import engine.entity.CompletedQuiz;
 import engine.entity.Quiz;
 import engine.entity.User;
 import engine.exceptions.ForbiddenException;
 import engine.exceptions.NotFoundException;
+import engine.repository.CompletedQuizRepository;
 import engine.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class QuizService {
     @Autowired
     QuizRepository quizRepository;
+
+    @Autowired
+    CompletedQuizRepository completedQuizRepository;
 
     @Autowired
     UserService userService;
@@ -48,12 +52,32 @@ public class QuizService {
         quizRepository.delete(quiz);
     }
 
-    public List<Quiz> getAllQuizzes() {
-        return (List<Quiz>) quizRepository.findAll();
+    public Page<Quiz> getAllQuizzes(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        return quizRepository.findAll(paging);
     }
 
     public boolean isCorrectAnswer(long id, int[] answer) {
         Quiz quiz = getQuiz(id);
-        return quiz.isCorrectAnswer(answer);
+        boolean isCorrect = quiz.isCorrectAnswer(answer);
+
+        if (isCorrect) {
+            User user = userService.getCurrentUser();
+            CompletedQuiz completedQuiz = new CompletedQuiz(quiz, user);
+
+            completedQuizRepository.save(completedQuiz);
+
+            quiz.getCompletedQuizList().add(completedQuiz);
+            user.getCompletedQuizList().add(completedQuiz);
+        }
+
+        return isCorrect;
+    }
+
+    public Slice<CompletedQuiz> getAllCompletedQuizForCurrentUser(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+        User user = userService.getCurrentUser();
+        return completedQuizRepository.findByUser(user, paging);
     }
 }
